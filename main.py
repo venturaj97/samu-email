@@ -39,7 +39,7 @@ app.add_middleware(
 async def extract_text_from_file(file: UploadFile) -> str:
     """
     Extrai o texto de um UploadFile com base na sua extensão.
-    Suporta .txt, .pdf, .eml, e .msg.
+    Suporta .txt, .pdf ou .eml.
     """
     filename = file.filename
     content = await file.read() # Lê o arquivo
@@ -70,10 +70,6 @@ async def extract_text_from_file(file: UploadFile) -> str:
                 return msg.get_payload(decode=True).decode()
             return "" # Retorna vazio se não encontrar texto plano
 
-        elif filename.endswith(".msg"):
-            msg = extract_msg.Message(content)
-            return msg.body
-
         else:
             # Se o formato não for suportado, levanta um erro
             raise HTTPException(status_code=400, detail=f"Formato de arquivo não suportado: {filename}")
@@ -100,7 +96,7 @@ async def processar_email(
     Recebe o conteúdo de um email via texto direto ou upload de arquivo.
     
     - **email_text**: Texto colado do corpo do email.
-    - **email_file**: Arquivo de email nos formatos .txt, .pdf, .eml, ou .msg.
+    - **email_file**: Arquivo de email nos formatos .txt, .pdf ou .eml.
     
     A API extrai o texto, realiza uma classificação **mock** e sugere uma resposta.
     """
