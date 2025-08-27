@@ -105,8 +105,13 @@
 
                     <div class="mb-4">
                         <label for="email_file" class="form-label"><i class="fas fa-file-arrow-up text-secondary me-2"></i>Faça o upload de um arquivo:</label>
-                        <input class="form-control" type="file" id="email_file" name="email_file" accept=".txt,.pdf,.eml">
-                        <div class="form-text">Formatos suportados: TXT, PDF e EML.</div>
+                        <div class="input-group">
+                            <input class="form-control" type="file" id="email_file" name="email_file" accept=".txt,.pdf,.msg">
+                            <button class="btn btn-outline-danger" type="button" id="cancelFileBtn" style="display: none;" title="Cancelar seleção">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">Formatos suportados: TXT, PDF e MSG.</div>
                     </div>
 
                     <div id="errorArea" class="alert alert-danger" style="display: none;"></div>
@@ -156,6 +161,8 @@
             const respostaP = document.getElementById('resposta');
             const errorArea = document.getElementById('errorArea');
             const copyBtn = document.getElementById('copyBtn');
+            const cancelFileBtn = document.getElementById('cancelFileBtn'); 
+
 
             // --- Funções Auxiliares de UI ---
 
@@ -208,9 +215,18 @@
                 if (emailFileInput.files.length > 0) {
                     emailTextInput.value = ''; // Limpa o texto
                     emailTextInput.disabled = true;
+                    cancelFileBtn.style.display = 'block'; // << MOSTRA o botão de cancelar
+
                 } else {
                     emailTextInput.disabled = false;
+                    cancelFileBtn.style.display = 'none'; // << ESCONDE o botão de cancelar
+
                 }
+            });
+            cancelFileBtn.addEventListener('click', () => {
+            emailFileInput.value = null; // A forma mais limpa de limpar a seleção de arquivo
+            // Dispara o evento 'change' manualmente para que a lógica acima seja executada
+            emailFileInput.dispatchEvent(new Event('change')); 
             });
 
             // --- Lógica de Submissão do Formulário ---
