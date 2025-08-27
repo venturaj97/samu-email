@@ -8,12 +8,30 @@ import extract_msg
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="SAMU API - Email",
     description="Uma API para classificar emails como produtivos ou improdutivos e sugerir respostas.",
     version="1.0.0"
+)
+
+# --- NOVA CONFIGURAÇÃO DO CORS ---
+# Lista de origens que podem fazer requisições à nossa API
+origins = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1",
+    "http://127.0.0.1:8000",
+    "null"  # Importante para permitir requisições de arquivos locais (file://)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Permite todos os métodos (GET, POST, etc)
+    allow_headers=["*"], # Permite todos os cabeçalhos
 )
 
 # logica
