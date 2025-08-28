@@ -1,0 +1,64 @@
+/* static/css/style.css */
+
+body {
+    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.container {
+    max-width: 800px;
+}
+.card {
+    border: none;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.card-header {
+    background: linear-gradient(135deg, #0056b3, #007bff);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: 0;
+}
+.card-header i {
+    margin-right: 10px;
+}
+.btn-primary {
+    background-color: #0069d9;
+    border-color: #0062cc;
+    padding: 12px;
+    font-weight: 600;
+}
+.form-label {
+    font-weight: 500;
+}
+
+/* Animação de Fade-in */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilo do botão de copiar */
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    border: none;
+    background: #e9ecef;
+    border-radius: 5px;
+    padding: 5px 10px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.copy-btn:hover {
+    opacity: 1;
+}
+.copy-btn .fa-copy { display: inline; }
+.copy-btn .fa-check { display: none; }
+.copy-btn.copied { background-color: #198754; color: white; }
+.copy-btn.copied .fa-copy { display: none; }
+.copy-btn.copied .fa-check { display: inline; }
