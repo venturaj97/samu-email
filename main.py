@@ -4,7 +4,6 @@ import email
 from email.policy import default
 
 import PyPDF2
-import httpx
 import nltk
 from dotenv import load_dotenv
 
@@ -12,9 +11,10 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
+from openai import AsyncOpenAI
 
 load_dotenv()
-HF_API_TOKEN = os.getenv("HF_API_TOKEN")
+
 
 try:
     nltk.data.find('tokenizers/punkt')
@@ -48,6 +48,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 @app.get("/")
 def read_root():
     return {"status": "API online e funcionando!"}
@@ -68,39 +70,48 @@ def nlp_pre_texto(text: str) -> str:
 
 async def get_ai_classification(text: str) -> str:
     """
-    Conecta-se à API da Hugging Face para classificar o texto.
-    Usa um modelo de "Zero-Shot Classification", que não precisa ser treinado.
+    Usa a API da OpenAI (GPT) com um prompt específico para classificar o texto.
+    Esta abordagem é muito mais robusta para diferentes idiomas e contextos.
     """
-    if not HF_API_TOKEN:
-        raise HTTPException(status_code=500, detail="Chave da API da Hugging Face não configurada.")
-        
-    API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"
-    headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
-    
-    payload = {
-        "inputs": text,
-        "parameters": {
-            "candidate_labels": ["Produtivo", "Improdutivo"],
-            "multi_label": False
-        },
-    }
+    if not client.api_key:
+        raise HTTPException(status_code=500, detail="Chave da API da OpenAI não configurada.")  
 
-    async with httpx.AsyncClient(timeout=20.0) as client:
-        try:
-            response = await client.post(API_URL, headers=headers, json=payload)
-            response.raise_for_status() # Lança um erro para status codes 4xx/5xx
-            result = response.json()
-            # A API retorna as labels ordenadas pela pontuação de confiança (score)
-            # A primeira label da lista é a mais provável.
-            return result['labels'][0]
-        except httpx.ReadTimeout:
-            raise HTTPException(status_code=504, detail="A análise do email demorou muito (timeout). Tente novamente.")
-        except httpx.HTTPStatusError as e:
-            # Captura erros da API da Hugging Face (ex: modelo carregando, erro interno)
-            error_detail = e.response.json().get('error', str(e))
-            raise HTTPException(status_code=502, detail=f"Erro na comunicação com a API de IA: {error_detail}")
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Ocorreu um erro inesperado na análise de IA: {str(e)}")
+    # Este é o nosso "prompt". Estamos dando instruções claras para a IA.
+    system_prompt = """
+    Você é um assistente de IA especialista em classificar emails.
+    Sua tarefa é analisar o email fornecido e classificá-lo em uma de duas categorias: 'Produtivo' ou 'Improdutivo'.
+    Um email 'Produtivo' é aquele que requer uma ação, resposta ou atenção, como uma solicitação, um problema, uma dúvida ou uma tarefa.
+    Um email 'Improdutivo' é social, informativo, um agradecimento ou spam, e não requer uma ação imediata.
+    Responda APENAS com a palavra 'Produtivo' ou 'Improdutivo', sem nenhuma outra explicação.
+    """
+
+    try:
+        # Nova sintaxe para chamar a API com o cliente
+        response = await client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": text}
+            ],
+            temperature=0,
+            max_tokens=5
+        )
+        classification = response.choices[0].message.content.strip()
+
+        # Uma verificação final para garantir que a resposta é válida
+        if classification in ["Produtivo", "Improdutivo"]:
+            return classification
+        else:
+            # Se a IA responder algo inesperado, retornamos um fallback seguro
+            return "Produtivo"
+
+    except Exception as e:
+        # Captura erros de API, autenticação, etc.
+        print(f"====== ERRO DETALHADO DA API OPENAI ======")
+        print(e)
+        print(f"==========================================")
+        raise HTTPException(status_code=503, detail=f"Erro na comunicação com a API da OpenAI: {str(e)}")
+
 
 
 async def extract_texto_arquivo(file: UploadFile) -> str:
@@ -151,9 +162,16 @@ async def processar_email(
     if not text_to_process or not text_to_process.strip():
         raise HTTPException(status_code=400, detail="O conteúdo do email está vazio ou não pôde ser lido.")
 
+# ===================== DEBUGGING - INÍCIO =====================
+    print("\n--- INICIANDO DEBUG ---")
+    print(f"1. Texto bruto recebido (text_to_process): >>{text_to_process}<<")
+    
     # 1. Aplicar a técnica de NLP (pré-processamento)
     cleaned_text = nlp_pre_texto(text_to_process)
-
+    
+    print(f"2. Texto limpo enviado para a IA (cleaned_text): >>{cleaned_text}<<")
+    print("--- FIM DO DEBUG ---\n")
+    # ====================== DEBUGGING - FIM =======================
     # 2. Conectar com a API de IA para obter a classificação
     #    >>> A LÓGICA MOCK FOI SUBSTITUÍDA AQUI <<<
     categoria = await get_ai_classification(cleaned_text)
