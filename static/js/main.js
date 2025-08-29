@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- Seleção de Elementos ---
+    //Seleção de Elementos
     const form = document.getElementById('emailForm');
     const emailTextInput = document.getElementById('email_text');
     const emailFileInput = document.getElementById('email_file');
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const recipientEmailInput = document.getElementById('recipientEmail');
     const sendStatus = document.getElementById('sendStatus');
 
-    // --- Funções Auxiliares de UI ---
+    //Funções Auxiliares de UI
     function showLoading(isLoading) {
         if (isLoading) {
             btnText.textContent = 'Analisando...';
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sendStatus.textContent = ''; // Limpa o status anterior
     }
     
-    // --- Lógica de Interatividade do Formulário ---
+    //Lógica de Interatividade do Formulário
     emailTextInput.addEventListener('input', () => {
         if (emailTextInput.value.trim()) {
             emailFileInput.value = '';
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         emailTextInput.dispatchEvent(new Event('input')); 
     });
 
-    // --- Lógica de Submissão do Formulário ---
+    //Lógica de Submissão do Formulário
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
         
@@ -107,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: formData,
             });
 
-            // GARANTA QUE ESTA LINHA ESTEJA CORRETA
             const data = await response.json(); 
 
             if (!response.ok) {

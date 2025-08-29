@@ -21,7 +21,6 @@ def preprocess_text_for_nlp(text: str) -> str:
 
 async def get_ai_classification(text: str) -> dict:
     """Usa a API da OpenAI (GPT) para classificar o texto e gerar uma resposta."""
-    # A verificação agora usa o objeto client diretamente
     if not client.api_key:
         raise HTTPException(status_code=500, detail="Chave da API da OpenAI não configurada.")
 
@@ -66,7 +65,6 @@ async def extract_text_from_file(file: UploadFile) -> str:
                 text += page.extract_text()
             return text
         
-        # --- LÓGICA CORRIGIDA AQUI ---
         elif filename.endswith(".eml"):
             msg = email.message_from_bytes(content, policy=default)
             if msg.is_multipart():
