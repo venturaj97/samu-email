@@ -1,13 +1,10 @@
-# app/api.py
-
 from typing import Optional
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 
-# Importa as funções de serviço e os schemas
 from . import services
-from .schemas import AnaliseResponse
+from . schemas import AnaliseResponse, EmailRequest
+from . import email_sender
 
-# Cria um "roteador" para organizar os endpoints
 router = APIRouter()
 
 @router.post("/processar/", response_model=AnaliseResponse, summary="Processa e classifica um email")
@@ -39,3 +36,19 @@ async def processar_email(
         categoria=ai_result.get("categoria", "Indefinido"),
         resposta_sugerida=ai_result.get("resposta_sugerida", "Não foi possível gerar uma resposta.")
     )
+
+
+@router.post("/enviar-email/", summary="Envia a resposta por email")
+async def enviar_resposta_email(request: EmailRequest):
+    """
+    Recebe um destinatário e uma mensagem, e envia o email.
+    """
+    sucesso = await email_sender.send_email(
+        destinatario=request.destinatario,
+        assunto="Resposta à sua solicitação",
+        corpo=request.mensagem
+    )
+    if sucesso:
+        return {"status": "Email enviado com sucesso!"}
+    else:
+        raise HTTPException(status_code=500, detail="Ocorreu um erro interno ao tentar enviar o email.")

@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const respostaP = document.getElementById('resposta');
     const errorArea = document.getElementById('errorArea');
     const copyBtn = document.getElementById('copyBtn');
+    const sendEmailArea = document.getElementById('sendEmailArea');
+    const sendEmailForm = document.getElementById('sendEmailForm');
+    const recipientEmailInput = document.getElementById('recipientEmail');
+    const sendStatus = document.getElementById('sendStatus');
 
     // --- Funções Auxiliares de UI ---
     function showLoading(isLoading) {
@@ -46,6 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         resultArea.style.display = 'block';
         resultArea.classList.add('fade-in');
+        sendEmailArea.style.display = 'block'; 
+        sendStatus.textContent = ''; // Limpa o status anterior
     }
     
     // --- Lógica de Interatividade do Formulário ---
@@ -116,7 +122,52 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- Lógica do Botão de Copiar ---
+    sendEmailForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const recipient = recipientEmailInput.value;
+        const message = respostaP.textContent; // Pega a resposta da área de resultados
+
+        if (!recipient) {
+            sendStatus.textContent = 'Por favor, insira um email de destinatário.';
+            sendStatus.className = 'form-text text-danger';
+            return;
+        }
+
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true;
+        sendStatus.textContent = 'Enviando...';
+        sendStatus.className = 'form-text text-muted';
+
+        try {
+            const response = await fetch('/api/enviar-email/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    destinatario: recipient,
+                    mensagem: message
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.detail || 'Falha no envio.');
+            }
+            
+            sendStatus.textContent = result.status;
+            sendStatus.className = 'form-text text-success';
+
+        } catch (error) {
+            console.error('Erro ao enviar email:', error);
+            sendStatus.textContent = 'Erro: ' + error.message;
+            sendStatus.className = 'form-text text-danger';
+        } finally {
+            sendBtn.disabled = false;
+        }
+    });
+
     // A verificação 'if (copyBtn)' previne o erro se o botão não for encontrado
     if (copyBtn) {
         copyBtn.addEventListener('click', function() {

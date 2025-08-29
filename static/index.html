@@ -30,7 +30,7 @@
                         <label for="email_file" class="form-label"><i class="fas fa-file-arrow-up text-secondary me-2"></i>Faça o upload de um arquivo:</label>
                         <div class="input-group">
                             <input class="form-control" type="file" id="email_file" name="email_file" accept=".txt,.pdf,.eml">
-                            <button class="btn btn-outline-danger" type="button" id="cancelFileBtn" style="display: none;" title="Cancelar seleção">
+                            <button class="btn btn-outline-danger" type="button" id="cancelFileBtn" style="display: none;" title="Cancelar">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
@@ -57,10 +57,21 @@
                     <h5>Resposta Automática Sugerida:</h5>
                     <div class="p-3 bg-light border rounded position-relative">
                         <p id="resposta" class="mb-0 pe-5"></p>
-                        <button id="copyBtn" class="copy-btn" title="Copiar para área de transferência">
+                        <button id="copyBtn" class="copy-btn" title="Copiar">
                             <i class="fas fa-copy"></i>
                             <i class="fas fa-check"></i>
                         </button>
+                    </div>
+                    <div id="sendEmailArea" class="mt-4">
+                        <hr>
+                        <p class="fw-bold">Enviar esta resposta para:</p>
+                        <form id="sendEmailForm" class="d-flex gap-2">
+                            <input type="email" id="recipientEmail" class="form-control" placeholder="email@destinatario.com" required>
+                            <button type="submit" id="sendBtn" class="btn btn-success">
+                                <i class="fas fa-paper-plane me-2"></i>Enviar
+                            </button>
+                        </form>
+                        <div id="sendStatus" class="form-text mt-2"></div>
                     </div>
                 </div>
             </div>
