@@ -8,7 +8,7 @@ from app.api import router as api_router
 
 try:
     nltk.data.find('tokenizers/punkt')
-except nltk.downloader.DownloadError:
+except LookupError:
     nltk.download('punkt')
 
 app = FastAPI(
