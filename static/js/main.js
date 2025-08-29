@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailTextInput = document.getElementById('email_text');
     const emailFileInput = document.getElementById('email_file');
     const cancelFileBtn = document.getElementById('cancelFileBtn');
+    const cancelTextBtn = document.getElementById('cancelTextBtn');
     const submitBtn = document.getElementById('submitBtn');
     const btnText = document.getElementById('btn-text');
     const btnSpinner = document.getElementById('btn-spinner');
@@ -49,12 +50,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // --- Lógica de Interatividade do Formulário ---
     emailTextInput.addEventListener('input', () => {
-        if (emailTextInput.value) {
+        if (emailTextInput.value.trim()) {
             emailFileInput.value = '';
             emailFileInput.disabled = true;
             cancelFileBtn.style.display = 'none';
+            cancelTextBtn.style.display = 'block';
+            
         } else {
             emailFileInput.disabled = false;
+            cancelTextBtn.style.display = 'none';
         }
     });
 
@@ -72,6 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
     cancelFileBtn.addEventListener('click', () => {
         emailFileInput.value = null;
         emailFileInput.dispatchEvent(new Event('change')); 
+    });
+    
+    cancelTextBtn.addEventListener('click', () => {
+        emailTextInput.value = null;
+        emailTextInput.dispatchEvent(new Event('input')); 
     });
 
     // --- Lógica de Submissão do Formulário ---

@@ -14,7 +14,7 @@ body {
     overflow: hidden;
 }
 .card-header {
-    background: linear-gradient(135deg, #0056b3, #007bff);
+    background: linear-gradient(135deg, #003b79, #007bff);
     color: white;
     padding: 1.5rem;
     border-bottom: 0;
@@ -62,3 +62,16 @@ body {
 .copy-btn.copied { background-color: #198754; color: white; }
 .copy-btn.copied .fa-copy { display: none; }
 .copy-btn.copied .fa-check { display: inline; }
+
+.cancel-text-btn {
+    position: absolute;
+    top: 40px;  
+    right: 15px;
+    z-index: 10; 
+    color: #505050;
+    border: none;
+}
+
+.cancel-text-btn:hover {
+    color: #dc3545; /* Vermelho ao passar o mouse */
+}

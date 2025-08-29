@@ -18,11 +18,12 @@
             
             <div class="card-body p-4 p-md-5">
                 <form id="emailForm">
-                    <div class="mb-3">
-                        <label for="email_text" class="form-label"><i class="fas fa-keyboard text-secondary me-2"></i>Cole o conteúdo do email:</label>
+                    <div class="mb-3 position-relative"> <label for="email_text" class="form-label"><i class="fas fa-keyboard text-secondary me-2"></i>Cole o conteúdo do email:</label>
                         <textarea class="form-control" id="email_text" name="email_text" rows="8" placeholder="Prezado(a), gostaria de saber o status da minha solicitação..."></textarea>
+                        <button class="btn btn-sm cancel-text-btn" type="button" id="cancelTextBtn" style="display: none;" title="Limpar texto">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    
                     <div class="text-center my-3 text-muted"><small>OU</small></div>
 
                     <div class="mb-4">
