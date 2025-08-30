@@ -1,35 +1,108 @@
-# 🚀 Analisador e Classificador Inteligente de Emails - SAMU
+Markdown
 
-## 📄 Descrição do Projeto
+## Analisador e Classificador de Emails com IA - SAMU
 
-Este projeto é uma solução digital desenvolvida para automatizar a triagem e resposta de emails. Utilizando Inteligência Artificial, a aplicação classifica os emails recebidos em categorias predefinidas (`Produtivo` ou `Improdutivo`), gera uma sugestão de resposta contextual e permite o envio dessa resposta diretamente da interface.
+### Descrição do Projeto
 
-O objetivo é otimizar o tempo da equipe, eliminando a necessidade de análise manual de cada email e permitindo que se concentrem em tarefas que exigem ação imediata.
+Esta aplicação web foi desenvolvida para automatizar a análise e classificação de emails. Utilizando Inteligência Artificial através da API da OpenAI, o sistema lê o conteúdo de um email, o classifica como "Produtivo" ou "Improdutivo", e gera uma sugestão de resposta que pode ser enviada diretamente pela interface.
 
-## ✨ Funcionalidades Principais
+O objetivo principal é otimizar o fluxo de trabalho, permitindo que a equipe foque nos emails que realmente necessitam de uma ação.
 
-* **Análise de Conteúdo:** Permite a análise de emails colando o texto diretamente ou fazendo o upload de arquivos (`.txt`, `.pdf`, `.eml`).
-* **Classificação com IA:** Utiliza o modelo GPT-3.5-turbo da OpenAI para classificar os emails com base em seu conteúdo e contexto.
-* **Geração Dinâmica de Respostas:** A IA gera uma resposta automática relevante e apropriada para a categoria identificada.
-* **Envio de Email Integrado:** Funcionalidade para enviar a resposta gerada para um destinatário especificado, diretamente da aplicação.
-* **Interface Web Intuitiva:** Um frontend limpo e interativo construído com HTML, CSS e JavaScript puro, com design responsivo graças ao Bootstrap.
+### Funcionalidades
 
-## 🛠️ Tecnologias Utilizadas
+- Análise de emails a partir de texto colado ou upload de arquivos (.txt, .pdf, .eml).
+- Classificação de conteúdo utilizando o modelo GPT-3.5-turbo da OpenAI.
+- Geração de respostas dinâmicas e contextuais baseadas na classificação da IA.
+- Funcionalidade integrada para enviar a resposta gerada por email para um destinatário.
+- Interface web interativa e responsiva.
 
-* **Backend:**
-    * Python 3.10+
-    * FastAPI
-    * Uvicorn (Servidor ASGI)
-    * Pydantic (Validação de dados)
-* **Frontend:**
-    * HTML5
-    * CSS3 (Bootstrap 5)
-    * JavaScript (Fetch API para comunicação com o backend)
-* **Inteligência Artificial & NLP:**
-    * OpenAI (GPT-3.5-turbo)
-    * NLTK (para pré-processamento de texto)
-* **Envio de Email:**
-    * `smtplib` (Biblioteca padrão do Python)
-* **Dependências Principais:**
-    * `fastapi`, `uvicorn`, `python-dotenv`, `openai`, `pypdf2`, `nltk`
+### Tecnologias Utilizadas
 
+- **Backend:**
+  - Python 3.10+
+  - FastAPI
+  - Uvicorn
+- **Frontend:**
+  - HTML5
+  - CSS3 (Bootstrap 5)
+  - JavaScript
+- **Inteligência Artificial e NLP:**
+  - OpenAI (GPT-3.5-turbo)
+  - NLTK
+- **Envio de Email:**
+  - smtplib
+
+### Estrutura do Projeto
+```
+/
+├── .env
+├── requirements.txt
+├── main.py
+│
+├── app/
+│   ├── api.py
+│   ├── config.py
+│   ├── email_sender.py
+│   ├── schemas.py
+│   └── services.py
+│
+└── static/
+├── index.html
+├── css/
+│   └── style.css
+└── js/
+└── main.js
+```
+
+### Como Executar Localmente
+
+Siga os passos abaixo para configurar e executar o projeto em sua máquina.
+
+#### Pré-requisitos
+
+- Python 3.10 ou superior.
+- Conta na [OpenAI](https://platform.openai.com/) com faturamento ativado para acesso à API.
+- Conta do Gmail com verificação em duas etapas ativada para gerar uma "Senha de App".
+
+#### 1. Clonar o Repositório
+
+```bash
+git clone git@github.com:venturaj97/samu-email.git
+cd samu-email
+```
+#### 2. Criar e Ativar o Ambiente Virtual e instalar as dependências
+
+```bash
+# Criar o ambiente
+python -m venv venv
+
+# Ativar o ambiente no Linux/macOS
+source venv/bin/activate
+
+# Ativar o ambiente no Windows
+venv\Scripts\activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+```
+
+
+
+#### 3. Configurar Variáveis de Ambiente
+```
+Conteúdo do arquivo .env
+
+# Chave da API da OpenAI
+OPENAI_API_KEY="sk-sua_chave_secreta_aqui"
+
+# Credenciais para o envio de email via Gmail
+EMAIL_ADDRESS="seu.email@gmail.com"
+
+# Use uma "Senha de App" de 16 dígitos gerada na sua conta Google
+EMAIL_APP_PASSWORD="suasenhadeappde16letras"
+```
+
+#### 4. Executar a Aplicação
+```
+uvicorn main:app --reload
