@@ -1,5 +1,3 @@
-Markdown
-
 ## Analisador e Classificador de Emails com IA - SAMU
 
 ### Descrição do Projeto
